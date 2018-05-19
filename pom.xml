@@ -9,7 +9,27 @@
     <packaging>jar</packaging>
 
     <name>url-shortener</name>
-    <description>Demo project for Spring Boot</description>
+    <description>A service for shortening url</description>
+
+    <url>https://github.com/rupertw/${project.artifactId}</url>
+    <licenses>
+        <license>
+            <name>The MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <id>rupertw</id>
+            <name>www</name>
+            <email>rupertwong@163.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:rupertw/${project.artifactId}.git</connection>
+        <developerConnection>scm:git:git@github.com:rupertw/${project.artifactId}.git</developerConnection>
+        <url>git@github.com:rupertw/${project.artifactId}.git</url>
+    </scm>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
