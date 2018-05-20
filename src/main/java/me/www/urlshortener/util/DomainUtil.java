@@ -21,11 +21,9 @@ public class DomainUtil {
 
     private static final String BLACKLIST_FILENAME = "blacklist";
 
-    private static final Set<String> BLACKLIST;
+    private static final Set<String> BLACKLIST = new HashSet<>();
 
     static {
-        BLACKLIST = new HashSet<>();
-
         try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(BLACKLIST_FILENAME);
              final InputStreamReader isr = new InputStreamReader(is, "UTF-8");
              final BufferedReader br = new BufferedReader(isr)) {
@@ -50,7 +48,7 @@ public class DomainUtil {
      * @return
      */
     public static boolean isInBlackList(String domain) {
-        if (BLACKLIST == null || domain == null || domain.isEmpty()) {
+        if (domain == null || domain.isEmpty()) {
             return false;
         }
 
