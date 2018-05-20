@@ -1,5 +1,6 @@
 package me.www.urlshortener.util;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ public class DomainUtil {
      * @return
      */
     public static boolean isInBlackList(String domain) {
-        if (domain == null || domain.isEmpty()) {
+        if (BLACKLIST.isEmpty() || StringUtils.isEmpty(domain)) {
             return false;
         }
 
