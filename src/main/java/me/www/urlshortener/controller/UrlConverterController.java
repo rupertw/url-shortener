@@ -1,5 +1,7 @@
 package me.www.urlshortener.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class UrlConverterController {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 缩短网址

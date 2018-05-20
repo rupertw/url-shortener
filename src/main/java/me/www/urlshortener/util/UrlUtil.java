@@ -15,11 +15,11 @@ public class UrlUtil {
     /**
      * url验证器
      */
-    private static final UrlValidator urlValidator = new UrlValidator(new String[]{"http", "https"});
+    private static final UrlValidator URL_VALIDATOR = new UrlValidator(new String[]{"http", "https"});
 
 
     public static boolean isValid(String url) {
-        return urlValidator.isValid(url);
+        return URL_VALIDATOR.isValid(url);
     }
 
     /**

@@ -17,14 +17,14 @@ import java.util.Set;
  */
 public class DomainUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(DomainUtil.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DomainUtil.class);
 
     private static final String BLACKLIST_FILENAME = "blacklist";
 
-    private static final Set<String> blacklist;
+    private static final Set<String> BLACKLIST;
 
     static {
-        blacklist = new HashSet<>();
+        BLACKLIST = new HashSet<>();
 
         try (final InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(BLACKLIST_FILENAME);
              final InputStreamReader isr = new InputStreamReader(is, "UTF-8");
@@ -36,10 +36,10 @@ public class DomainUtil {
                 if (line.isEmpty() || line.startsWith("#")) {
                     continue;
                 }
-                blacklist.add(line);
+                BLACKLIST.add(line);
             }
         } catch (final IOException e) {
-            logger.error("An error occurred when reading from domain-blacklist file.", e);
+            LOGGER.error("An error occurred when reading from domain-blacklist file.", e);
         }
     }
 
@@ -50,12 +50,12 @@ public class DomainUtil {
      * @return
      */
     public static boolean isInBlackList(String domain) {
-        if (blacklist == null || domain == null || domain.isEmpty()) {
+        if (BLACKLIST == null || domain == null || domain.isEmpty()) {
             return false;
         }
 
         do {
-            if (blacklist.contains(domain)) {
+            if (BLACKLIST.contains(domain)) {
                 return true;
             }
 
