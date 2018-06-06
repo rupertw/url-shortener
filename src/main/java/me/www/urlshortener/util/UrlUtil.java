@@ -44,9 +44,11 @@ public class UrlUtil {
             e.printStackTrace();
         }
 
-        url = urlObj.toString();
-        String host = urlObj.getHost();
-        url = url.replaceFirst(host, host.toLowerCase());
+        if (urlObj != null) {
+            url = urlObj.toString();
+            String host = urlObj.getHost();
+            url = url.replaceFirst(host, host.toLowerCase());
+        }
 
         return url;
     }
@@ -70,7 +72,11 @@ public class UrlUtil {
             e.printStackTrace();
         }
 
-        return urlObj.getHost().toLowerCase();
+        if (urlObj != null) {
+            return urlObj.getHost().toLowerCase();
+        } else {
+            return null;
+        }
     }
 
 }
