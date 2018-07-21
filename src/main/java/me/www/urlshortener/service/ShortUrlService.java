@@ -5,7 +5,7 @@ import me.www.urlshortener.domain.ShortUrl;
 /**
  * @author: www
  * @date: 2018/7/21 22:19
- * @description: TODO
+ * @description: 短地址Service
  */
 public interface ShortUrlService {
 
