@@ -29,6 +29,7 @@ public class RedirectController {
 
     @GetMapping(value = "/{scode}")
     public ResponseEntity<Void> redirect(@PathVariable String scode) {
+        logger.info("request for redirect: " + scode);
 
         // 获取原网址
         ShortUrl shortUrl = shortUrlService.getShortUrl(scode);
@@ -43,4 +44,5 @@ public class RedirectController {
         ResponseEntity<Void> resp = new ResponseEntity<>(respHeader, HttpStatus.FOUND);
         return resp;
     }
+
 }

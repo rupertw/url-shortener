@@ -1,5 +1,8 @@
 package me.www.urlshortener.rest;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import me.www.urlshortener.util.WebObjectUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +15,12 @@ public class RestResultGenerator {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestResultGenerator.class);
 
+    private static final ObjectMapper JSON_MAPPER;
+
+    static {
+        JSON_MAPPER = WebObjectUtil.getRootWebApplicationContext().getBean(ObjectMapper.class);
+    }
+
     /**
      * 生成响应成功的结果
      *
@@ -22,9 +31,15 @@ public class RestResultGenerator {
         RestResult<T> result = RestResult.newInstance();
         result.setSuccess(true);
         result.setData(data);
-        /*if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("--------> result:{}",  writeValueAsString(result));
-        }*/
+
+        if (LOGGER.isDebugEnabled()) {
+            try {
+                LOGGER.debug("--------> result:{}", JSON_MAPPER.writeValueAsString(result));
+            } catch (JsonProcessingException e) {
+                // nothing to do.
+            }
+        }
+
         return result;
     }
 
@@ -39,9 +54,13 @@ public class RestResultGenerator {
         result.setSuccess(false);
         result.setErrorInfo(restErrorEnum);
 
-        /*if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("--------> result:{}", JacksonMapper.toJsonString(result));
-        }*/
+        if (LOGGER.isDebugEnabled()) {
+            try {
+                LOGGER.debug("--------> result:{}", JSON_MAPPER.writeValueAsString(result));
+            } catch (JsonProcessingException e) {
+                // nothing to do.
+            }
+        }
 
         return result;
     }

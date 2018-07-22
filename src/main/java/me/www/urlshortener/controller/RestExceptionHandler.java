@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @ControllerAdvice(annotations = RestController.class)
 public class RestExceptionHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestExceptionHandler.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * 非法参数异常
@@ -28,7 +28,8 @@ public class RestExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     private RestResult illegalParamsExceptionHandler(IllegalParamsException e) {
-        LOGGER.error("--------->请求参数不合法!", e);
+        logger.error("--------->请求参数不合法!", e);
         return RestResultGenerator.genErrorResult(RestErrorEnum.ILLEGAL_PARAMS);
     }
+
 }

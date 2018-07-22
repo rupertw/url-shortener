@@ -9,7 +9,7 @@ public enum RestErrorEnum {
 
     ILLEGAL_PARAMS("101", "请求参数不合法!"),
 
-    INTERNAL_ERROR("501", "服务器内部错误!");
+    NOT_EXIST("401", "查询资源不存在!");
 
     private String errorCode;
 

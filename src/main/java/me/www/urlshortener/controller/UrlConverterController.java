@@ -2,6 +2,7 @@ package me.www.urlshortener.controller;
 
 import me.www.urlshortener.domain.ShortUrl;
 import me.www.urlshortener.rest.IllegalParamsException;
+import me.www.urlshortener.rest.RestErrorEnum;
 import me.www.urlshortener.rest.RestResult;
 import me.www.urlshortener.rest.RestResultGenerator;
 import me.www.urlshortener.service.ShortUrlService;
@@ -40,7 +41,7 @@ public class UrlConverterController {
 
     @PostConstruct
     private void init() {
-        String patternStr = "^http://www\\.me/([a-zA-Z0-9]+)$";
+        String patternStr = "^http://" + domain.replace(".", "\\.") + "/([a-zA-Z0-9]+)$"; // "^http://www\\.me/([a-zA-Z0-9]+)$"
         pattern = Pattern.compile(patternStr);
     }
 
@@ -51,6 +52,8 @@ public class UrlConverterController {
      */
     @GetMapping("/shorten")
     public RestResult<String> shorten(String url) {
+        logger.info("request for /shorten: " + url);
+
         // 1、参数验证
         if (!UrlUtil.isValid(url)) {
             throw new IllegalParamsException();
@@ -62,7 +65,7 @@ public class UrlConverterController {
 
         // 2、生成短网址
         ShortUrl shortUrl = shortUrlService.generateShortUrl(url);
-        String surl = domain + "/" + shortUrl.getCode();
+        String surl = "http://" + domain + "/" + shortUrl.getCode();
 
         return RestResultGenerator.genResult(surl);
     }
@@ -74,6 +77,8 @@ public class UrlConverterController {
      */
     @GetMapping("/original")
     public ResponseEntity<RestResult<String>> original(String surl) {
+        logger.info("request for /original: " + surl);
+
         // 1、参数验证
         if (!UrlUtil.isValid(surl)) {
             throw new IllegalParamsException();
@@ -91,10 +96,9 @@ public class UrlConverterController {
 
         ResponseEntity<RestResult<String>> resp;
         if (shortUrl == null) {
-            resp = new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            resp = new ResponseEntity<>(RestResultGenerator.genErrorResult(RestErrorEnum.NOT_EXIST), HttpStatus.OK);
         } else {
             resp = ResponseEntity.ok(RestResultGenerator.genResult(shortUrl.getUrl()));
-            // resp = new ResponseEntity<>(RestResultGenerator.genResult(shortUrl.getUrl()), HttpStatus.OK);
         }
 
         return resp;

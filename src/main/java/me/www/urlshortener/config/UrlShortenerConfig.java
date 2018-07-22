@@ -8,19 +8,13 @@ import org.springframework.context.annotation.Configuration;
 /**
  * @author: www
  * @date: 2018/7/21 22:29
- * @description: TODO
+ * @description: Bean Configuration
  */
 @Configuration
 public class UrlShortenerConfig {
 
-    @Value("${snowflake.datacenterId}")
-    private Long datacenterId;
-
-    @Value("${snowflake.machineId}")
-    private Long machineId;
-
     @Bean
-    public SnowFlake snowFlake() {
+    public SnowFlake snowFlake(@Value("${snowflake.datacenterId}") Long datacenterId, @Value("${snowflake.machineId}") Long machineId) {
         return new SnowFlake(datacenterId, machineId);
     }
 
