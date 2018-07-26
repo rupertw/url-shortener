@@ -34,14 +34,15 @@ public class UrlConverterController {
     @Autowired
     private ShortUrlService shortUrlService;
 
-    @Value("${url.shortener.domain.name}")
-    private String domain;
+    @Value("${url.shortener.service.host}")
+    private String serviceHost;
 
     private Pattern pattern;
 
     @PostConstruct
     private void init() {
-        String patternStr = "^http://" + domain.replace(".", "\\.") + "/([a-zA-Z0-9]+)$"; // "^http://www\\.me/([a-zA-Z0-9]+)$"
+        // "^http://www\\.me/([a-zA-Z0-9]+)$"
+        String patternStr = "^" + serviceHost.replace(".", "\\.") + "/([a-zA-Z0-9]+)$";
         pattern = Pattern.compile(patternStr);
     }
 
@@ -65,7 +66,7 @@ public class UrlConverterController {
 
         // 2、生成短网址
         ShortUrl shortUrl = shortUrlService.generateShortUrl(url);
-        String surl = "http://" + domain + "/" + shortUrl.getCode();
+        String surl = serviceHost + "/" + shortUrl.getCode();
 
         return RestResultGenerator.genResult(surl);
     }
