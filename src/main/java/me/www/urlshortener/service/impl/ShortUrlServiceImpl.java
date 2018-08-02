@@ -1,6 +1,7 @@
 package me.www.urlshortener.service.impl;
 
 import me.www.urlshortener.domain.ShortUrl;
+import me.www.urlshortener.repository.ShortUrlRepository;
 import me.www.urlshortener.service.ShortUrlService;
 import me.www.urlshortener.util.Base62;
 import me.www.urlshortener.util.SnowFlake;
@@ -8,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * @author: www
@@ -18,7 +19,8 @@ import java.util.HashMap;
 @Service
 public class ShortUrlServiceImpl implements ShortUrlService {
 
-    private HashMap<String, ShortUrl> cacheMap = new HashMap<>();
+    @Autowired
+    private ShortUrlRepository shortUrlRepository;
 
     @Autowired
     private SnowFlake snowFlake;
@@ -32,14 +34,19 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         String code = Base62.encode(snowFlake.nextId());
 
         ShortUrl shortUrl = new ShortUrl(code, url);
-        cacheMap.put(code, shortUrl);
+        shortUrlRepository.save(shortUrl);
 
         return shortUrl;
     }
 
     @Override
     public ShortUrl getShortUrl(String code) {
-        return StringUtils.isEmpty(code) ? null : cacheMap.get(code);
+        if (StringUtils.isEmpty(code)) {
+            return null;
+        }
+
+        Optional<ShortUrl> optional = shortUrlRepository.findById(code);
+        return optional.isPresent() ? optional.get() : null;
     }
 
 }

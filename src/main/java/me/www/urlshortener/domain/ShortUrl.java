@@ -1,5 +1,9 @@
 package me.www.urlshortener.domain;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
@@ -7,11 +11,17 @@ import java.util.Objects;
  * @date: 2018/5/19 23:11
  * @description: 短地址
  */
-public class ShortUrl {
+@RedisHash("short_url")
+public class ShortUrl implements Serializable {
 
+    @Id
     private String code;
 
     private String url;
+
+    public ShortUrl() {
+        super();
+    }
 
     public ShortUrl(String code, String url) {
         this.code = code;

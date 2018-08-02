@@ -1,4 +1,4 @@
-package me.www.urlshortener.config;
+package me.www.urlshortener.configuration;
 
 import me.www.urlshortener.util.SnowFlake;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @description: Bean Configuration
  */
 @Configuration
-public class UrlShortenerConfig {
+public class UrlShortenerConfiguration {
 
     @Bean
     public SnowFlake snowFlake(@Value("${snowflake.datacenterId}") Long datacenterId, @Value("${snowflake.machineId}") Long machineId) {
