@@ -27,6 +27,9 @@ public class RedisConfiguration {
         redisTemplate.setKeySerializer(stringRedisSerializer);
         redisTemplate.setHashKeySerializer(stringRedisSerializer);
 
+        // explicitly enable transaction support
+        redisTemplate.setEnableTransactionSupport(true);
+
         return redisTemplate;
     }
 

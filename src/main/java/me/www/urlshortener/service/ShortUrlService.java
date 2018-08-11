@@ -9,8 +9,20 @@ import me.www.urlshortener.domain.ShortUrl;
  */
 public interface ShortUrlService {
 
-    ShortUrl generateShortUrl(String url);
+    /**
+     * 简化url
+     *
+     * @param url
+     * @return
+     */
+    ShortUrl shortenUrl(String url);
 
+    /**
+     * 根据code查询简化结果
+     *
+     * @param code
+     * @return
+     */
     ShortUrl getShortUrl(String code);
 
 }

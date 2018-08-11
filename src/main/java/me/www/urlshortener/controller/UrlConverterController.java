@@ -65,7 +65,7 @@ public class UrlConverterController {
         }
 
         // 2、生成短网址
-        ShortUrl shortUrl = shortUrlService.generateShortUrl(url);
+        ShortUrl shortUrl = shortUrlService.shortenUrl(url);
         String surl = serviceHost + "/" + shortUrl.getCode();
 
         return RestResultGenerator.genResult(surl);
