@@ -35,6 +35,11 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     public final static Integer LR_SHORTEN_URL_MAX_NUM = 120;
     public final static Integer LR_SHORTEN_URL_MIN_NUM = 100;
 
+    /**
+     * redis key: 访问计数(redis类型: ZSet)
+     */
+    public final static String VISIT_COUNT_KEY = "visit_count";
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
