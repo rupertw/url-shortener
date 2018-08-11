@@ -32,7 +32,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     public final static String LR_SHORTEN_URL_ZSET = "lr_shorten_url_zset";
     public final static String LR_SHORTEN_URL_HASH = "lr_shorten_url_hash";
-    public final static Integer LR_SHORTEN_URL_NUM = 2;
+    public final static Integer LR_SHORTEN_URL_MAX_NUM = 120;
+    public final static Integer LR_SHORTEN_URL_MIN_NUM = 100;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
@@ -70,14 +71,14 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         for (int i = 0; i < 5; i++) {
             redisTemplate.watch(LR_SHORTEN_URL_ZSET);
             Long zsetSize = redisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
-            if (zsetSize <= LR_SHORTEN_URL_NUM) {
+            if (zsetSize <= LR_SHORTEN_URL_MAX_NUM) { // 当缓存数量达到LR_SHORTEN_URL_MAX_NUM时，批量删除元素，使缓存数量减为LR_SHORTEN_URL_MIN_NUM
                 redisTemplate.unwatch();
                 break;
             }
-            Set<Object> urlSet = redisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_NUM - 1); // 注：查询redis数据，必须在multi()之前
+            Set<Object> urlSet = redisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_MIN_NUM - 1); // 注：查询redis数据，必须在multi()之前
             redisTemplate.multi();
             redisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
-            redisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_NUM - 1);
+            redisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_MIN_NUM - 1);
             List<Object> results = redisTemplate.exec();
             // empty response indicates that the transaction was aborted due to the watched key changing.
             if (results.isEmpty()) {
@@ -97,7 +98,16 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }
 
         Optional<ShortUrl> optional = shortUrlRepository.findById(code);
-        return optional.isPresent() ? optional.get() : null;
+        if (optional.isPresent()) {
+            ShortUrl shortUrl = optional.get();
+            // 增加访问次数
+            redisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
+
+            return shortUrl;
+        } else {
+            return null;
+        }
+
     }
 
 }
