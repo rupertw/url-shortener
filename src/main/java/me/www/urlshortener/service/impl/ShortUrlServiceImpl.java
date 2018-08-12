@@ -120,7 +120,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     }
 
     @Override
-    public ShortUrl getShortUrl(String code) {
+    public ShortUrl getShortUrl(String code, Boolean toVisit) {
         if (StringUtils.isEmpty(code)) {
             return null;
         }
@@ -128,9 +128,10 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         Optional<ShortUrl> optional = shortUrlRepository.findById(code);
         if (optional.isPresent()) {
             ShortUrl shortUrl = optional.get();
-            // 增加访问次数
-            redisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
-
+            if (toVisit) {
+                // 增加访问次数
+                redisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
+            }
             return shortUrl;
         } else {
             return null;

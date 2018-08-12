@@ -93,7 +93,7 @@ public class UrlConverterController {
 
         // 2、获取原网址
         String scode = matcher.group(1);
-        ShortUrl shortUrl = shortUrlService.getShortUrl(scode);
+        ShortUrl shortUrl = shortUrlService.getShortUrl(scode, false);
 
         ResponseEntity<RestResult<String>> resp;
         if (shortUrl == null) {

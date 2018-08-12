@@ -32,7 +32,7 @@ public class RedirectController {
         logger.info("request for redirect: " + scode);
 
         // 获取原网址
-        ShortUrl shortUrl = shortUrlService.getShortUrl(scode);
+        ShortUrl shortUrl = shortUrlService.getShortUrl(scode, true);
 
         if (shortUrl == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
