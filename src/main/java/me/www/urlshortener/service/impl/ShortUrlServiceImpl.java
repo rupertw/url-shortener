@@ -6,8 +6,12 @@ import me.www.urlshortener.service.ShortUrlService;
 import me.www.urlshortener.util.Base62;
 import me.www.urlshortener.util.SnowFlake;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,7 +24,9 @@ import java.util.Set;
  * @description: 短地址Service
  */
 @Service
-public class ShortUrlServiceImpl implements ShortUrlService {
+public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
+
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * redis key: ShortUrl存储key前缀 (redis类型: hash)
@@ -32,8 +38,8 @@ public class ShortUrlServiceImpl implements ShortUrlService {
      */
     public final static String LR_SHORTEN_URL_ZSET = "lr_shorten_url_zset";
     public final static String LR_SHORTEN_URL_HASH = "lr_shorten_url_hash";
-    public final static Integer LR_SHORTEN_URL_MAX_NUM = 120;
-    public final static Integer LR_SHORTEN_URL_MIN_NUM = 100;
+    public final static Integer LR_SHORTEN_URL_LIMIT = 100; // 缓存容量限制
+    public final static Integer LR_SHORTEN_URL_CLEAR_PER_LIMIT = 10; // 清理缓存时每次最多清理数
 
     /**
      * redis key: 访问计数(redis类型: ZSet)
@@ -48,6 +54,9 @@ public class ShortUrlServiceImpl implements ShortUrlService {
 
     @Autowired
     private SnowFlake snowFlake;
+
+    @Autowired
+    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
     public ShortUrl shortenUrl(String url) {
@@ -72,28 +81,42 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         // 保存到最近简化url缓存
         redisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
         redisTemplate.opsForHash().put(LR_SHORTEN_URL_HASH, url, SHORT_URL_KEY_PREFIX + code);
-        // 采用lru算法清除缓存(事务处理，失败重试)
-        for (int i = 0; i < 5; i++) {
-            redisTemplate.watch(LR_SHORTEN_URL_ZSET);
-            Long zsetSize = redisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
-            if (zsetSize <= LR_SHORTEN_URL_MAX_NUM) { // 当缓存数量达到LR_SHORTEN_URL_MAX_NUM时，批量删除元素，使缓存数量减为LR_SHORTEN_URL_MIN_NUM
-                redisTemplate.unwatch();
-                break;
-            }
-            Set<Object> urlSet = redisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_MIN_NUM - 1); // 注：查询redis数据，必须在multi()之前
-            redisTemplate.multi();
-            redisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
-            redisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, zsetSize - LR_SHORTEN_URL_MIN_NUM - 1);
-            List<Object> results = redisTemplate.exec();
-            // empty response indicates that the transaction was aborted due to the watched key changing.
-            if (results.isEmpty()) {
-                continue;
-            } else {
-                break;
-            }
-        }
 
         return shortUrl;
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        // 线程处理：采用lru算法清除最近简化url缓存
+        threadPoolTaskExecutor.execute(() -> {
+            while (true) {
+                redisTemplate.watch(LR_SHORTEN_URL_ZSET);
+                Long zsetSize = redisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
+                if (zsetSize <= LR_SHORTEN_URL_LIMIT) {
+                    redisTemplate.unwatch();
+                    try {
+                        // 每分钟执行一次批量清理（高并发下，每秒执行一次批量清理，注意要保证清理速度大于产生速度）
+                        Thread.sleep(60000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    continue;
+                }
+
+                Long end_index = Long.min(zsetSize - LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT); // 每次最多清理10个
+                Set<Object> urlSet = redisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
+                redisTemplate.multi();
+                redisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
+                redisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, end_index - 1);
+                List<Object> results = redisTemplate.exec();
+                // empty response indicates that the transaction was aborted due to the watched key changing.
+                if (results.isEmpty()) {
+                    //logger.info("");
+                } else {
+                    logger.info("采用lru算法清除最近简化url缓存" + end_index + "个元素.");
+                }
+            }
+        });
     }
 
     @Override
