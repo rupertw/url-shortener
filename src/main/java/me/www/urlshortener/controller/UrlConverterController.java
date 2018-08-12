@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
@@ -51,7 +52,7 @@ public class UrlConverterController {
      *
      * @return
      */
-    @GetMapping("/shorten")
+    @PostMapping("/shorten")
     public RestResult<String> shorten(String url) {
         logger.info("request for /shorten: " + url);
 

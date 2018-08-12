@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
@@ -48,7 +48,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     public final static String VISIT_COUNT_KEY = "visit_count";
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
 
     @Autowired
     private ShortUrlRepository shortUrlRepository;
@@ -69,11 +69,11 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         }
 
         /* 查询是否已简化url */
-        String shortUrlKey = (String) redisTemplate.opsForHash().get(LR_SHORTEN_URL_HASH, url);
+        String shortUrlKey = (String) stringRedisTemplate.opsForHash().get(LR_SHORTEN_URL_HASH, url);
         if (StringUtils.isNotEmpty(shortUrlKey)) {
             Optional<ShortUrl> optional = shortUrlRepository.findById(shortUrlKey.split(":")[1]);
             if (optional.isPresent()) {
-                redisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+                stringRedisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
                 return optional.get();
             }
         }
@@ -83,8 +83,8 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         ShortUrl shortUrl = new ShortUrl(code, url);
         shortUrlRepository.save(shortUrl);
         // 保存到最近简化url缓存
-        redisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
-        redisTemplate.opsForHash().put(LR_SHORTEN_URL_HASH, url, SHORT_URL_KEY_PREFIX + code);
+        stringRedisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+        stringRedisTemplate.opsForHash().put(LR_SHORTEN_URL_HASH, url, SHORT_URL_KEY_PREFIX + code);
 
         return shortUrl;
     }
@@ -94,10 +94,10 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         // 线程处理：采用lru算法清除最近简化url缓存
         threadPoolTaskExecutor.execute(() -> {
             while (true) {
-                redisTemplate.watch(LR_SHORTEN_URL_ZSET);
-                Long zsetSize = redisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
+                stringRedisTemplate.watch(LR_SHORTEN_URL_ZSET);
+                Long zsetSize = stringRedisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
                 if (zsetSize <= LR_SHORTEN_URL_LIMIT) {
-                    redisTemplate.unwatch();
+                    stringRedisTemplate.unwatch();
                     try {
                         // 每分钟执行一次批量清理（高并发下，每秒执行一次批量清理，注意要保证清理速度大于产生速度）
                         Thread.sleep(60000);
@@ -108,11 +108,11 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
                 }
 
                 Long end_index = Long.min(zsetSize - LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT); // 每次最多清理10个
-                Set<Object> urlSet = redisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
-                redisTemplate.multi();
-                redisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
-                redisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, end_index - 1);
-                List<Object> results = redisTemplate.exec();
+                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
+                stringRedisTemplate.multi();
+                stringRedisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
+                stringRedisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, end_index - 1);
+                List<Object> results = stringRedisTemplate.exec();
                 // empty response indicates that the transaction was aborted due to the watched key changing.
                 if (results.isEmpty()) {
                     //logger.info("");
@@ -134,7 +134,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
             ShortUrl shortUrl = optional.get();
             if (toVisit) {
                 // 增加访问次数
-                redisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
+                stringRedisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
             }
             return shortUrl;
         } else {
@@ -152,7 +152,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     @Override
     public List<ShortUrlVO> topnVisit(Integer topn) {
         // 查询数据
-        Set<ZSetOperations.TypedTuple<Object>> topnSet = redisTemplate.opsForZSet().reverseRangeWithScores(VISIT_COUNT_KEY, 0, topn - 1);
+        Set<ZSetOperations.TypedTuple<String>> topnSet = stringRedisTemplate.opsForZSet().reverseRangeWithScores(VISIT_COUNT_KEY, 0, topn - 1);
         if (topnSet.isEmpty()) {
             return Collections.emptyList();
         }
@@ -160,7 +160,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         // 数据转换
         List<ShortUrlVO> topnList = new ArrayList<>();
         topnSet.forEach(objectTypedTuple -> {
-            String shortUrlKey = (String) objectTypedTuple.getValue();
+            String shortUrlKey = objectTypedTuple.getValue();
             Integer visitCount = objectTypedTuple.getScore().intValue();
 
             Optional<ShortUrl> optional = shortUrlRepository.findById(shortUrlKey.split(":")[1]);

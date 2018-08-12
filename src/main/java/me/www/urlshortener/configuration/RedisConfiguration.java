@@ -4,59 +4,48 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * @author: www
  * @date: 2018/8/1 23:50
  * @description: Redis相关配置
+ * @see org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
  */
 @Configuration
-@EnableRedisRepositories(basePackages = {"me.www.urlshortener.repository"}, redisTemplateRef = "redisTemplate")
+@EnableRedisRepositories(basePackages = {"me.www.urlshortener.repository"}, redisTemplateRef = "stringRedisTemplate")
 public class RedisConfiguration {
 
     @Bean
     @ConditionalOnMissingBean(name = "redisTemplate")
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(redisConnectionFactory);
 
-        StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();
-        redisTemplate.setKeySerializer(stringRedisSerializer);
-        redisTemplate.setHashKeySerializer(stringRedisSerializer);
+        RedisSerializer<String> stringSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringSerializer);
+        template.setHashKeySerializer(stringSerializer);
 
         // explicitly enable transaction support
-        redisTemplate.setEnableTransactionSupport(true);
+        template.setEnableTransactionSupport(true);
 
-        return redisTemplate;
+        return template;
     }
 
     @Bean
-    public ValueOperations<String, Object> valueOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForValue();
-    }
+    @ConditionalOnMissingBean
+    public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        StringRedisTemplate template = new StringRedisTemplate();
+        template.setConnectionFactory(redisConnectionFactory);
 
-    @Bean
-    public ListOperations<String, Object> listOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForList();
-    }
+        // explicitly enable transaction support
+        template.setEnableTransactionSupport(true);
 
-    @Bean
-    public SetOperations<String, Object> setOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForSet();
-    }
-
-    @Bean
-    public ZSetOperations<String, Object> zSetOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForZSet();
-    }
-
-    @Bean
-    public HashOperations<String, String, Object> hashOperations(RedisTemplate<String, Object> redisTemplate) {
-        return redisTemplate.opsForHash();
+        return template;
     }
 
 }
-
