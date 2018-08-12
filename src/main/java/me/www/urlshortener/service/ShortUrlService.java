@@ -1,6 +1,9 @@
 package me.www.urlshortener.service;
 
 import me.www.urlshortener.domain.ShortUrl;
+import me.www.urlshortener.vo.ShortUrlVO;
+
+import java.util.List;
 
 /**
  * @author: www
@@ -25,5 +28,13 @@ public interface ShortUrlService {
      * @return
      */
     ShortUrl getShortUrl(String code, Boolean toVisit);
+
+    /**
+     * 查询访问计数排行
+     *
+     * @param topn
+     * @return
+     */
+    List<ShortUrlVO> topnVisit(Integer topn);
 
 }

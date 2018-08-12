@@ -5,18 +5,19 @@ import me.www.urlshortener.repository.ShortUrlRepository;
 import me.www.urlshortener.service.ShortUrlService;
 import me.www.urlshortener.util.Base62;
 import me.www.urlshortener.util.SnowFlake;
+import me.www.urlshortener.vo.ShortUrlVO;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ZSetOperations;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author: www
@@ -57,6 +58,9 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
 
     @Autowired
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
+
+    @Value("${url.shortener.service.host}")
+    private String serviceHost;
 
     @Override
     public ShortUrl shortenUrl(String url) {
@@ -137,6 +141,40 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
             return null;
         }
 
+    }
+
+    /**
+     * 查询访问计数排行
+     *
+     * @param topn
+     * @return
+     */
+    @Override
+    public List<ShortUrlVO> topnVisit(Integer topn) {
+        // 查询数据
+        Set<ZSetOperations.TypedTuple<Object>> topnSet = redisTemplate.opsForZSet().reverseRangeWithScores(VISIT_COUNT_KEY, 0, topn - 1);
+        if (topnSet.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 数据转换
+        List<ShortUrlVO> topnList = new ArrayList<>();
+        topnSet.forEach(objectTypedTuple -> {
+            String shortUrlKey = (String) objectTypedTuple.getValue();
+            Integer visitCount = objectTypedTuple.getScore().intValue();
+
+            Optional<ShortUrl> optional = shortUrlRepository.findById(shortUrlKey.split(":")[1]);
+            if (optional.isPresent()) {
+                ShortUrl shortUrl = optional.get();
+                ShortUrlVO vo = new ShortUrlVO();
+                vo.setSurl(serviceHost + "/" + shortUrl.getCode());
+                vo.setLurl(shortUrl.getUrl());
+                vo.setVisitCount(visitCount);
+                topnList.add(vo);
+            }
+        });
+
+        return topnList;
     }
 
 }
