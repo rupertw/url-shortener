@@ -111,6 +111,15 @@
     <build>
         <plugins>
             <plugin>
+                <!-- The Surefire Plugin is used during the test phase of the build lifecycle to execute the unit tests of an application. -->
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <!-- Set this to true to skip running tests, but still compile them. Its use is NOT RECOMMENDED, but quite convenient on occasion. -->
+                    <skipTests>true</skipTests>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
