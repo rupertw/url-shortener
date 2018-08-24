@@ -7,9 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author: www
- * @date: 2018/7/22 10:29
- * @description: 生成Rest接口响应体
+ * 生成Rest接口响应体
+ *
+ * @author www
+ * @since 2018/7/22 10:29
  */
 public class RestResultGenerator {
 

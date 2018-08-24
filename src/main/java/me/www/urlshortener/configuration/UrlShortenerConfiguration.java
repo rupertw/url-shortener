@@ -9,9 +9,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
- * @author: www
- * @date: 2018/7/21 22:29
- * @description: Bean Configuration
+ * Bean Configuration
+ *
+ * @author www
+ * @see org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+ * @since 2018/7/21 22:29
  */
 @Configuration
 public class UrlShortenerConfiguration {

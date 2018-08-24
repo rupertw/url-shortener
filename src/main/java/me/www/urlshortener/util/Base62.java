@@ -3,10 +3,10 @@ package me.www.urlshortener.util;
 import java.util.HashMap;
 
 /**
- * Base62
+ * Base62:
  * number encoding and decoding system based on ASCII 62 characters(A-Za-z0-9)
  *
- * @author user
+ * @author www
  */
 public class Base62 {
 
@@ -19,6 +19,12 @@ public class Base62 {
         }
     }
 
+    /**
+     * 将整数编码为62进制字符串
+     *
+     * @param num
+     * @return
+     */
     public static String encode(long num) {
         StringBuilder encodedText = new StringBuilder();
 
@@ -31,6 +37,12 @@ public class Base62 {
         return encodedText.toString();
     }
 
+    /**
+     * 解码62进制字符串为整数
+     *
+     * @param code
+     * @return
+     */
     public static long decode(String code) {
         long decodedNumber = 0;
         long pow = 1;

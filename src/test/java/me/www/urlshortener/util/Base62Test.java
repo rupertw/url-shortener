@@ -5,9 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author: www
- * @date: 2018/6/10 19:10
- * @description: 单元测试
+ * Base62单元测试
+ *
+ * @author www
+ * @since 2018/6/10 19:10
  */
 public class Base62Test {
 

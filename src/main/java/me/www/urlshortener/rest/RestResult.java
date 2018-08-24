@@ -3,9 +3,10 @@ package me.www.urlshortener.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
- * @author: www
- * @date: 2018/7/22 10:23
- * @description: Rest接口响应体
+ * Rest接口响应体
+ *
+ * @author www
+ * @since 2018/7/22 10:23
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RestResult<T> {

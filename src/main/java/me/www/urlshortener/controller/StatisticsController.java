@@ -14,9 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 /**
- * @author: www
- * @date: 2018/8/12 17:51
- * @description: 统计数据
+ * 统计数据接口
+ *
+ * @author www
+ * @since 2018/8/12 17:51
  */
 @RestController
 @RequestMapping("/statistics")
@@ -31,7 +32,7 @@ public class StatisticsController {
      * 访问计数排行
      *
      * @param topn
-     * @return
+     * @return 排行url信息列表
      */
     @GetMapping("/topnVisit")
     public RestResult<List<ShortUrlVO>> topnVisit(Integer topn) {

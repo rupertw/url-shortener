@@ -6,9 +6,10 @@ import me.www.urlshortener.vo.ShortUrlVO;
 import java.util.List;
 
 /**
- * @author: www
- * @date: 2018/7/21 22:19
- * @description: 短地址Service
+ * 短地址Service
+ *
+ * @author www
+ * @since 2018/7/21 22:19
  */
 public interface ShortUrlService {
 

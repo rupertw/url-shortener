@@ -12,10 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
+ * 用于web应用中，网络请求中 获取当前线程相关对象
+ *
  * @author www
- * @date: 2018/7/22 16:13
- * @description 用于web应用中，网络请求中 获取当前线程相关对象
  * @see org.springframework.web.context.request.RequestContextHolder
+ * @since 2018/7/22 16:13
  */
 public class WebObjectUtil {
 

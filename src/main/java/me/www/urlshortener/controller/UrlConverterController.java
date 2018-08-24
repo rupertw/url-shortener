@@ -23,9 +23,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author: www
- * @date: 2018/5/20 14:29
- * @description: 长短地址转换
+ * 长短地址转换接口
+ *
+ * @author www
+ * @since 2018/5/20 14:29
  */
 @RestController
 public class UrlConverterController {
@@ -50,6 +51,7 @@ public class UrlConverterController {
     /**
      * 缩短网址
      *
+     * @param url 原网址
      * @return
      */
     @PostMapping("/shorten")
@@ -75,6 +77,7 @@ public class UrlConverterController {
     /**
      * 网址还原
      *
+     * @param surl 短网址
      * @return
      */
     @GetMapping("/original")

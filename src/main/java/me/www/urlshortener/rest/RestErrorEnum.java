@@ -1,9 +1,10 @@
 package me.www.urlshortener.rest;
 
 /**
- * @author: www
- * @date: 2018/7/22 10:47
- * @description: 响应错误信息
+ * 响应错误信息
+ *
+ * @author www
+ * @since 2018/7/22 10:47
  */
 public enum RestErrorEnum {
 

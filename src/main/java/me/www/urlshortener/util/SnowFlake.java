@@ -1,9 +1,10 @@
 package me.www.urlshortener.util;
 
 /**
- * @author: www
- * @date: 2018/7/21 20:00
- * @description: Twitter的snowflake算法
+ * 基于snowflake算法的ID生成器
+ *
+ * @author www
+ * @since 2018/7/21 20:00
  */
 public class SnowFlake {
 
@@ -68,7 +69,7 @@ public class SnowFlake {
     }
 
     /**
-     * 产生下一个ID
+     * 产生新ID
      *
      * @return
      */

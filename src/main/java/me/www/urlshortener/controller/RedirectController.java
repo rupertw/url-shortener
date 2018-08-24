@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.URI;
 
 /**
- * @author: www
- * @date: 2018/5/20 13:56
- * @description: 短地址访问重定向
+ * 短地址访问重定向
+ *
+ * @author www
+ * @since 2018/5/20 13:56
  */
 @RestController
 public class RedirectController {

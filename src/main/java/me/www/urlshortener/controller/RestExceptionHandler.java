@@ -14,9 +14,11 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 /**
- * @author: www
- * @date: 2018/7/22 11:11
- * @description: 异常处理
+ * 异常处理
+ *
+ * @author www
+ * @see org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler
+ * @since 2018/7/22 11:11
  */
 @ControllerAdvice(annotations = RestController.class)
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -24,9 +26,10 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * 非法参数异常
+     * 非法参数异常处理
      *
-     * @see me.www.urlshortener.rest.IllegalParamsException
+     * @param e
+     * @return RestResult
      */
     @ExceptionHandler(IllegalParamsException.class)
     @ResponseBody
@@ -36,6 +39,13 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         return RestResultGenerator.genErrorResult(RestErrorEnum.ILLEGAL_PARAMS);
     }
 
+    /**
+     * 空指针异常处理
+     *
+     * @param e
+     * @param request
+     * @return ResponseEntity<Object>
+     */
     @ExceptionHandler({NullPointerException.class})
     public ResponseEntity<Object> internalServerError(RuntimeException e, WebRequest request) {
         logger.error(e.getMessage(), e);

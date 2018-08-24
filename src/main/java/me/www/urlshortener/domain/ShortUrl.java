@@ -7,9 +7,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * @author: www
- * @date: 2018/5/19 23:11
- * @description: 短地址
+ * 短地址
+ *
+ * @author www
+ * @since 2018/5/19 23:11
  */
 @RedisHash("short_url")
 public class ShortUrl implements Serializable {

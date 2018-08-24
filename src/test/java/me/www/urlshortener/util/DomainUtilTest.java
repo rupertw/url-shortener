@@ -5,9 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 /**
- * @author: www
- * @date: 2018/6/10 19:21
- * @description: 单元测试
+ * DomainUtil单元测试
+ *
+ * @author www
+ * @date 2018/6/10 19:21
  */
 public class DomainUtilTest {
 

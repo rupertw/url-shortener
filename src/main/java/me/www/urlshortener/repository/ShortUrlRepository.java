@@ -4,9 +4,10 @@ import me.www.urlshortener.domain.ShortUrl;
 import org.springframework.data.repository.CrudRepository;
 
 /**
- * @author: www
- * @date: 2018/8/2 23:06
- * @description: repository
+ * repository
+ *
+ * @author www
+ * @since 2018/8/2 23:06
  */
 public interface ShortUrlRepository extends CrudRepository<ShortUrl, String> {
 }

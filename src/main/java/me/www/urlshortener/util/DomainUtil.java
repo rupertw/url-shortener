@@ -12,9 +12,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * @author: www
- * @date: 2018/5/20 0:28
- * @description: domain工具类
+ * 域名工具类
+ *
+ * @author www
+ * @since 2018/5/20 0:28
  */
 public class DomainUtil {
 

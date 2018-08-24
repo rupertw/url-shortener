@@ -1,9 +1,10 @@
 package me.www.urlshortener.vo;
 
 /**
- * @author: www
- * @date: 2018/8/12 19:36
- * @description: VO
+ * 视图VO类
+ *
+ * @author www
+ * @since 2018/8/12 19:36
  */
 public class ShortUrlVO {
 

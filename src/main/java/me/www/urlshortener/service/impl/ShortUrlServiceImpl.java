@@ -20,9 +20,10 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 /**
- * @author: www
- * @date: 2018/7/21 22:25
- * @description: 短地址Service
+ * 短地址Service
+ *
+ * @author www
+ * @since 2018/7/21 22:25
  */
 @Service
 public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
@@ -143,12 +144,6 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
 
     }
 
-    /**
-     * 查询访问计数排行
-     *
-     * @param topn
-     * @return
-     */
     @Override
     public List<ShortUrlVO> topnVisit(Integer topn) {
         // 查询数据

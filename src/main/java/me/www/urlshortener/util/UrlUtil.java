@@ -6,9 +6,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 /**
- * @author: www
- * @date: 2018/5/19 23:35
- * @description: url工具类
+ * url工具类
+ *
+ * @author www
+ * @since 2018/5/19 23:35
  */
 public class UrlUtil {
 
@@ -26,7 +27,7 @@ public class UrlUtil {
      * 优化地址表示形式（将协议、主机名（域名）部分转化为小写）（URL地址格式：scheme://host:port/path）
      *
      * @param url
-     * @return
+     * @return 优化结果
      */
     public static String normalizeUrl(String url) {
         if (url == null) {
@@ -55,6 +56,9 @@ public class UrlUtil {
 
     /**
      * 获取域名（主机名）
+     *
+     * @param url 网址
+     * @return 网址中域名
      */
     public static String getDomain(String url) {
         if (url == null) {
