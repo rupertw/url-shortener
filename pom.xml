@@ -42,6 +42,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <docker.image.prefix>rupertw</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -127,7 +128,7 @@
             <plugin>
                 <groupId>com.spotify</groupId>
                 <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>1.4.3</version>
+                <version>1.4.4</version>
                 <executions>
                     <!--Make the Docker build process integrate with the Maven build process.
                     If you bind the default phases, when you type mvn package, you get a Docker image. When you type mvn deploy, your image gets pushed.-->
@@ -140,7 +141,7 @@
                     </execution>-->
                 </executions>
                 <configuration>
-                    <repository>${project.groupId}/${project.artifactId}</repository>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
                     <tag>${project.version}</tag>
                     <buildArgs>
                         <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
