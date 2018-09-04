@@ -2,7 +2,7 @@
 FROM openjdk:8u171-jdk-alpine3.8
 #维护者信息
 MAINTAINER "www"<rupertwong@163.com>
-#解决alpine镜像时区问题
+#alpine默认时区为UTC，需修改为CST(China Standard Time UT+8:00)
 RUN apk add -U tzdata \
     && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 #定义构建镜像时需要的参数
