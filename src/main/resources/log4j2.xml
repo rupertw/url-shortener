@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，设置status=debug 可以查看log4j的装配过程。 -->
+<!-- Configuration后面的status，这个用于设置log4j2自身内部的信息输出，可以不设置，设置 status="DEBUG" 可以查看log4j的装配过程。 -->
 <!-- monitorInterval：Log4j能够自动检测修改配置文件和重新配置本身，设置间隔秒数。-->
-<Configuration status="DEBUG" monitorInterval="1800">
+<Configuration monitorInterval="1800">
 
     <properties>
         <!-- 日志目录 -->
@@ -11,6 +11,17 @@
     </properties>
 
     <Appenders>
+        <RollingFile name="error_logfile" fileName="${LOG_HOME}/error.log" filePattern="${LOG_BAK_HOME}/error_%d{yyyy-MM-dd}_%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %c[%L] - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="99 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="20"/>
+        </RollingFile>
+
         <RollingFile name="info_logfile" fileName="${LOG_HOME}/info.log" filePattern="${LOG_BAK_HOME}/info_%d{yyyy-MM-dd}_%i.log.gz">
             <PatternLayout>
                 <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %c[%L] - %msg%n</Pattern>
@@ -34,17 +45,6 @@
             <DefaultRolloverStrategy max="20"/>
         </RollingFile>
 
-        <RollingFile name="error_logfile" fileName="${LOG_HOME}/error.log" filePattern="${LOG_BAK_HOME}/error_%d{yyyy-MM-dd}_%i.log.gz">
-            <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %c[%L] - %msg%n</Pattern>
-            </PatternLayout>
-            <Policies>
-                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
-                <SizeBasedTriggeringPolicy size="99 MB"/>
-            </Policies>
-            <DefaultRolloverStrategy max="20"/>
-        </RollingFile>
-
         <!-- 定义控制台输出 -->
         <Console name="console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [%t] %c[%L] - %msg%n"/>
@@ -52,9 +52,9 @@
     </Appenders>
 
     <Loggers>
-        <Root level="debug">
-            <AppenderRef ref="info_logfile" level="INFO"/>
+        <Root level="INFO">
             <AppenderRef ref="error_logfile" level="ERROR"/>
+            <AppenderRef ref="info_logfile" level="INFO"/>
             <AppenderRef ref="debug_logfile" level="DEBUG"/>
             <AppenderRef ref="console"/>
         </Root>
