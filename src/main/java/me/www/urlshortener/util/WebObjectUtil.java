@@ -20,9 +20,31 @@ import javax.servlet.http.HttpSession;
  */
 public class WebObjectUtil {
 
-    private static ServletRequestAttributes getRequestAttributes() {
-        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
-        return (ServletRequestAttributes) requestAttributes;
+    /**
+     * Find the root WebApplicationContext for this web app.
+     *
+     * @return
+     */
+    public static WebApplicationContext getRootWebApplicationContext() {
+        return WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    }
+
+    /**
+     * servlet上下文
+     *
+     * @return the ServletContext to which this session belongs.
+     */
+    public static ServletContext getServletContext() {
+        return getSession().getServletContext();
+    }
+
+    /**
+     * 当前web会话
+     *
+     * @return
+     */
+    public static HttpSession getSession() {
+        return getRequest().getSession();
     }
 
     /**
@@ -43,31 +65,9 @@ public class WebObjectUtil {
         return getRequestAttributes().getResponse();
     }
 
-    /**
-     * 当前web会话
-     *
-     * @return
-     */
-    public static HttpSession getSession() {
-        return getRequest().getSession();
-    }
-
-    /**
-     * servlet上下文
-     *
-     * @return the ServletContext to which this session belongs.
-     */
-    public static ServletContext getServletContext() {
-        return getSession().getServletContext();
-    }
-
-    /**
-     * Find the root WebApplicationContext for this web app.
-     *
-     * @return
-     */
-    public static WebApplicationContext getRootWebApplicationContext() {
-        return WebApplicationContextUtils.getRequiredWebApplicationContext(getServletContext());
+    private static ServletRequestAttributes getRequestAttributes() {
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        return (ServletRequestAttributes) requestAttributes;
     }
 
 }
