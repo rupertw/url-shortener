@@ -1,7 +1,9 @@
 package me.www.urlshortener;
 
+import me.www.urlshortener.util.SpringContextUtil;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ApplicationContext;
 
 /**
  * @author www
@@ -10,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class UrlShortenerApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(UrlShortenerApplication.class, args);
+        ApplicationContext applicationContext = SpringApplication.run(UrlShortenerApplication.class, args);
+        SpringContextUtil.setApplicationContext(applicationContext);
     }
 }
