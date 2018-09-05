@@ -1,5 +1,6 @@
 package me.www.urlshortener.service.impl;
 
+import me.www.urlshortener.constant.RedisConsts;
 import me.www.urlshortener.domain.ShortUrl;
 import me.www.urlshortener.repository.ShortUrlRepository;
 import me.www.urlshortener.service.ShortUrlService;
@@ -31,22 +32,9 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
-     * redis key: ShortUrl存储key前缀 (redis类型: hash)
+     * 清理缓存时每次最多清理数
      */
-    public final static String SHORT_URL_KEY_PREFIX = "short_url:";
-
-    /**
-     * redis key: 保存最近简化url相关
-     */
-    public final static String LR_SHORTEN_URL_ZSET = "lr_shorten_url_zset";
-    public final static String LR_SHORTEN_URL_HASH = "lr_shorten_url_hash";
-    public final static Integer LR_SHORTEN_URL_LIMIT = 100; // 缓存容量限制
-    public final static Integer LR_SHORTEN_URL_CLEAR_PER_LIMIT = 10; // 清理缓存时每次最多清理数
-
-    /**
-     * redis key: 访问计数(redis类型: ZSet)
-     */
-    public final static String VISIT_COUNT_KEY = "visit_count";
+    private final static Integer LR_SHORTEN_URL_CLEAR_PER_LIMIT = 10;
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -70,11 +58,11 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         }
 
         /* 查询是否已简化url */
-        String shortUrlKey = (String) stringRedisTemplate.opsForHash().get(LR_SHORTEN_URL_HASH, url);
+        String shortUrlKey = (String) stringRedisTemplate.opsForHash().get(RedisConsts.LR_SHORTEN_URL_HASH, url);
         if (StringUtils.isNotEmpty(shortUrlKey)) {
             Optional<ShortUrl> optional = shortUrlRepository.findById(shortUrlKey.split(":")[1]);
             if (optional.isPresent()) {
-                stringRedisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+                stringRedisTemplate.opsForZSet().add(RedisConsts.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
                 return optional.get();
             }
         }
@@ -84,8 +72,8 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         ShortUrl shortUrl = new ShortUrl(code, url);
         shortUrlRepository.save(shortUrl);
         // 保存到最近简化url缓存
-        stringRedisTemplate.opsForZSet().add(LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
-        stringRedisTemplate.opsForHash().put(LR_SHORTEN_URL_HASH, url, SHORT_URL_KEY_PREFIX + code);
+        stringRedisTemplate.opsForZSet().add(RedisConsts.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+        stringRedisTemplate.opsForHash().put(RedisConsts.LR_SHORTEN_URL_HASH, url, RedisConsts.SHORT_URL_KEY_PREFIX + code);
 
         return shortUrl;
     }
@@ -95,9 +83,9 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         // 线程处理：采用lru算法清除最近简化url缓存
         threadPoolTaskExecutor.execute(() -> {
             while (true) {
-                stringRedisTemplate.watch(LR_SHORTEN_URL_ZSET);
-                Long zsetSize = stringRedisTemplate.opsForZSet().size(LR_SHORTEN_URL_ZSET);
-                if (zsetSize <= LR_SHORTEN_URL_LIMIT) {
+                stringRedisTemplate.watch(RedisConsts.LR_SHORTEN_URL_ZSET);
+                Long zsetSize = stringRedisTemplate.opsForZSet().size(RedisConsts.LR_SHORTEN_URL_ZSET);
+                if (zsetSize <= RedisConsts.LR_SHORTEN_URL_LIMIT) {
                     stringRedisTemplate.unwatch();
                     try {
                         // 每分钟执行一次批量清理（高并发下，每秒执行一次批量清理，注意要保证清理速度大于产生速度）
@@ -108,11 +96,11 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
                     continue;
                 }
 
-                Long end_index = Long.min(zsetSize - LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT); // 每次最多清理10个
-                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
+                Long end_index = Long.min(zsetSize - RedisConsts.LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT); // 每次最多清理10个
+                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
                 stringRedisTemplate.multi();
-                stringRedisTemplate.opsForHash().delete(LR_SHORTEN_URL_HASH, urlSet.toArray());
-                stringRedisTemplate.opsForZSet().removeRange(LR_SHORTEN_URL_ZSET, 0, end_index - 1);
+                stringRedisTemplate.opsForHash().delete(RedisConsts.LR_SHORTEN_URL_HASH, urlSet.toArray());
+                stringRedisTemplate.opsForZSet().removeRange(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1);
                 List<Object> results = stringRedisTemplate.exec();
                 // empty response indicates that the transaction was aborted due to the watched key changing.
                 if (results.isEmpty()) {
@@ -135,7 +123,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
             ShortUrl shortUrl = optional.get();
             if (toVisit) {
                 // 增加访问次数
-                stringRedisTemplate.opsForZSet().incrementScore(VISIT_COUNT_KEY, SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
+                stringRedisTemplate.opsForZSet().incrementScore(RedisConsts.VISIT_COUNT_KEY, RedisConsts.SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
             }
             return shortUrl;
         } else {
@@ -147,7 +135,7 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     @Override
     public List<ShortUrlVO> topnVisit(Integer topn) {
         // 查询数据
-        Set<ZSetOperations.TypedTuple<String>> topnSet = stringRedisTemplate.opsForZSet().reverseRangeWithScores(VISIT_COUNT_KEY, 0, topn - 1);
+        Set<ZSetOperations.TypedTuple<String>> topnSet = stringRedisTemplate.opsForZSet().reverseRangeWithScores(RedisConsts.VISIT_COUNT_KEY, 0, topn - 1);
         if (topnSet.isEmpty()) {
             return Collections.emptyList();
         }
