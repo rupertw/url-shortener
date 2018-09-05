@@ -8,14 +8,11 @@ import me.www.urlshortener.util.Base62;
 import me.www.urlshortener.util.SnowFlake;
 import me.www.urlshortener.vo.ShortUrlVO;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,14 +24,7 @@ import java.util.*;
  * @since 2018/7/21 22:25
  */
 @Service
-public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
-
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
-
-    /**
-     * 清理缓存时每次最多清理数
-     */
-    private final static Integer LR_SHORTEN_URL_CLEAR_PER_LIMIT = 10;
+public class ShortUrlServiceImpl implements ShortUrlService {
 
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
@@ -45,12 +35,14 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
     @Autowired
     private SnowFlake snowFlake;
 
-    @Autowired
-    private ThreadPoolTaskExecutor threadPoolTaskExecutor;
-
     @Value("${url.shortener.service.host}")
     private String serviceHost;
 
+    /**
+     * @param url
+     * @return
+     * @see me.www.urlshortener.listener.ApplicationContextListener#onApplicationEvent(ContextRefreshedEvent)
+     */
     @Override
     public ShortUrl shortenUrl(String url) {
         if (StringUtils.isEmpty(url)) {
@@ -76,40 +68,6 @@ public class ShortUrlServiceImpl implements ShortUrlService, InitializingBean {
         stringRedisTemplate.opsForHash().put(RedisConsts.LR_SHORTEN_URL_HASH, url, RedisConsts.SHORT_URL_KEY_PREFIX + code);
 
         return shortUrl;
-    }
-
-    @Override
-    public void afterPropertiesSet() {
-        // 线程处理：采用lru算法清除最近简化url缓存
-        threadPoolTaskExecutor.execute(() -> {
-            while (true) {
-                stringRedisTemplate.watch(RedisConsts.LR_SHORTEN_URL_ZSET);
-                Long zsetSize = stringRedisTemplate.opsForZSet().size(RedisConsts.LR_SHORTEN_URL_ZSET);
-                if (zsetSize <= RedisConsts.LR_SHORTEN_URL_LIMIT) {
-                    stringRedisTemplate.unwatch();
-                    try {
-                        // 每分钟执行一次批量清理（高并发下，每秒执行一次批量清理，注意要保证清理速度大于产生速度）
-                        Thread.sleep(60000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    continue;
-                }
-
-                Long end_index = Long.min(zsetSize - RedisConsts.LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT); // 每次最多清理10个
-                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
-                stringRedisTemplate.multi();
-                stringRedisTemplate.opsForHash().delete(RedisConsts.LR_SHORTEN_URL_HASH, urlSet.toArray());
-                stringRedisTemplate.opsForZSet().removeRange(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1);
-                List<Object> results = stringRedisTemplate.exec();
-                // empty response indicates that the transaction was aborted due to the watched key changing.
-                if (results.isEmpty()) {
-                    //logger.info("");
-                } else {
-                    logger.info("采用lru算法清除最近简化url缓存" + end_index + "个元素.");
-                }
-            }
-        });
     }
 
     @Override
