@@ -13,7 +13,13 @@ public class SpringContextUtil {
     private static ApplicationContext applicationContext;
 
     public static void setApplicationContext(ApplicationContext context) {
-        applicationContext = context;
+        if (applicationContext == null) {
+            // 项目启动时为字段applicationContext赋值
+            applicationContext = context;
+        } else {
+            // 项目运行时不可修改字段applicationContext
+            throw new UnsupportedOperationException();
+        }
     }
 
     public static Object getBean(String name) {
