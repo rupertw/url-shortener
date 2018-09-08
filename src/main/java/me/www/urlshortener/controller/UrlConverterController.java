@@ -8,6 +8,7 @@ import me.www.urlshortener.rest.RestResultGenerator;
 import me.www.urlshortener.service.ShortUrlService;
 import me.www.urlshortener.util.DomainUtil;
 import me.www.urlshortener.util.UrlUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,13 +40,16 @@ public class UrlConverterController {
     @Value("${url.shortener.service.host}")
     private String serviceHost;
 
-    private Pattern pattern;
+    /**
+     * 短网址匹配正则表达式
+     */
+    private Pattern surlPattern;
 
     @PostConstruct
     private void init() {
         // "^http://www\\.me/([a-zA-Z0-9]+)$"
         String patternStr = "^" + serviceHost.replace(".", "\\.") + "/([a-zA-Z0-9]+)$";
-        pattern = Pattern.compile(patternStr);
+        surlPattern = Pattern.compile(patternStr);
     }
 
     /**
@@ -59,12 +63,15 @@ public class UrlConverterController {
         logger.info("request for /shorten: " + url);
 
         // 1、参数验证
-        if (!UrlUtil.isValid(url)) {
+        if (StringUtils.isEmpty(url)) {
             throw new IllegalParamsException();
+        }
+        if (!UrlUtil.isValid(url)) {
+            return RestResultGenerator.genErrorResult(RestErrorEnum.URL_NOT_VALID);
         }
         url = UrlUtil.normalizeUrl(url);
         if (DomainUtil.isInBlackList(UrlUtil.getDomain(url))) {
-            throw new IllegalParamsException();
+            return RestResultGenerator.genErrorResult(RestErrorEnum.URL_IN_BLACKLIST);
         }
 
         // 2、生成短网址
@@ -85,12 +92,15 @@ public class UrlConverterController {
         logger.info("request for /original: " + surl);
 
         // 1、参数验证
-        if (!UrlUtil.isValid(surl)) {
+        if (StringUtils.isEmpty(surl)) {
             throw new IllegalParamsException();
+        }
+        if (!UrlUtil.isValid(surl)) {
+            return new ResponseEntity<>(RestResultGenerator.genErrorResult(RestErrorEnum.URL_NOT_VALID), HttpStatus.OK);
         }
         surl = UrlUtil.normalizeUrl(surl);
         // 正则验证
-        Matcher matcher = pattern.matcher(surl);
+        Matcher matcher = surlPattern.matcher(surl);
         if (!matcher.find()) {
             throw new IllegalParamsException();
         }
