@@ -4,7 +4,7 @@ package me.www.urlshortener.rest;
  * 非法参数异常
  *
  * @author www
- * @since 2018/7/22 11:24
+ * @since 1.0.0
  */
 public class IllegalParamsException extends RuntimeException {
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
  * Rest接口响应体
  *
  * @author www
- * @since 2018/7/22 10:23
+ * @since 1.0.0
  */
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class RestResult<T> {

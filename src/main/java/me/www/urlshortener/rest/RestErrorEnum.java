@@ -4,7 +4,7 @@ package me.www.urlshortener.rest;
  * 响应错误信息
  *
  * @author www
- * @since 2018/7/22 10:47
+ * @since 1.0.0
  */
 public enum RestErrorEnum {
 

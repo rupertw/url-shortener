@@ -17,7 +17,7 @@ import java.util.Set;
  * Spring容器初始化完成事件
  *
  * @author wwww
- * @since 2018/9/5
+ * @since 1.0.0
  */
 @Component
 public class ApplicationContextListener implements ApplicationListener<ContextRefreshedEvent> {

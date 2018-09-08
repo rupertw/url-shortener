@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
  * 生成Rest接口响应体
  *
  * @author www
- * @since 2018/7/22 10:29
+ * @since 1.0.0
  */
 public class RestResultGenerator {
 

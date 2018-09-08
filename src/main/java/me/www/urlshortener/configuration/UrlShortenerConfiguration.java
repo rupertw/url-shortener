@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @author www
  * @see org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
- * @since 2018/7/21 22:29
+ * @since 1.0.0
  */
 @Configuration
 public class UrlShortenerConfiguration {

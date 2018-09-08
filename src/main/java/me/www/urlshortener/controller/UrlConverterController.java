@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
  * 长短地址转换接口
  *
  * @author www
- * @since 2018/5/20 14:29
+ * @since 1.0.0
  */
 @RestController
 public class UrlConverterController {

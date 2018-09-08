@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
  *
  * @author www
  * @see org.springframework.web.context.request.RequestContextHolder
- * @since 2018/7/22 16:13
+ * @since 1.0.0
  */
 public class WebObjectUtil {
 

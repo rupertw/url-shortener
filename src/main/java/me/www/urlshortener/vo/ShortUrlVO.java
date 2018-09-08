@@ -4,7 +4,7 @@ package me.www.urlshortener.vo;
  * 视图VO类
  *
  * @author www
- * @since 2018/8/12 19:36
+ * @since 1.0.0
  */
 public class ShortUrlVO {
 

@@ -7,6 +7,7 @@ import org.springframework.context.ApplicationContext;
 
 /**
  * @author www
+ * @see 1.0.0
  */
 @SpringBootApplication
 public class UrlShortenerApplication {

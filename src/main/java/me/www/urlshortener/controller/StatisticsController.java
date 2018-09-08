@@ -17,7 +17,7 @@ import java.util.List;
  * 统计数据接口
  *
  * @author www
- * @since 2018/8/12 17:51
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/statistics")

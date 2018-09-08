@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
  * 主要提供分布式锁相关方法
  *
  * @author wwww
- * @since 2018/9/1
+ * @since 1.0.0
  */
 public class RedisUtil {
 

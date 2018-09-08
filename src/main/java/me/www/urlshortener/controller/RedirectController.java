@@ -18,7 +18,7 @@ import java.net.URI;
  * 短地址访问重定向
  *
  * @author www
- * @since 2018/5/20 13:56
+ * @since 1.0.0
  */
 @RestController
 public class RedirectController {

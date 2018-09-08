@@ -9,7 +9,7 @@ import java.util.List;
  * 短地址Service
  *
  * @author www
- * @since 2018/7/21 22:19
+ * @since 1.0.0
  */
 public interface ShortUrlService {
 

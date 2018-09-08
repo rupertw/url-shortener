@@ -7,6 +7,7 @@ import java.util.HashMap;
  * number encoding and decoding system based on ASCII 62 characters(A-Za-z0-9)
  *
  * @author www
+ * @since 1.0.0
  */
 public class Base62 {
 

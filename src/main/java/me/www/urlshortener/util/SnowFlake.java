@@ -4,7 +4,7 @@ package me.www.urlshortener.util;
  * 基于snowflake算法的ID生成器
  *
  * @author www
- * @since 2018/7/21 20:00
+ * @since 1.0.0
  */
 public class SnowFlake {
 

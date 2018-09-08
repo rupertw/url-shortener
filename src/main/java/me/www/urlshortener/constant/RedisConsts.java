@@ -4,7 +4,7 @@ package me.www.urlshortener.constant;
  * redis存储相关常量
  *
  * @author wwww
- * @since 2018/9/5
+ * @since 1.0.0
  */
 public class RedisConsts {
 

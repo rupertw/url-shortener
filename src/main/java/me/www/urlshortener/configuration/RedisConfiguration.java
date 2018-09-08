@@ -15,7 +15,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
  *
  * @author www
  * @see org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
- * @since 2018/8/1 23:50
+ * @since 1.0.0
  */
 @Configuration
 @EnableRedisRepositories(basePackages = {"me.www.urlshortener.repository"}, redisTemplateRef = "stringRedisTemplate")
