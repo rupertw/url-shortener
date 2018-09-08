@@ -29,17 +29,18 @@ UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][
 # Quick Start
   >  The minimum requirements to run the quick start are: 
   >  * JDK 1.8 or above
-  >  * Maven 3.5.3 or above
   >  * Git
-  >  * Redis service
+  >  * Maven 3.5.3 or above
+  >  * Redis server
+  >  * Docker Engine
   >  * An Java IDE like IntelliJ IDEA (optional)
-  >  * Docker Engine (optional)
   
   1. Clone
      ```
      > git clone https://github.com/rupertw/url-shortener.git
+     > cd url-shortener
      ```
-  2. Modifiy application.properties on Indicator Item
+  2. Modifiy application.properties
      ``` 
      #默认8080端口
      #server.port=80
@@ -58,14 +59,14 @@ UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][
      spring.redis.database=1
      ...
      ```
-  3. Build
+  3. Build an image from the Dockerfile
      ```
-     > cd url-shortener
-     > mvn -DskipTests clean install -U
+     > mvn -DskipTests clean package -U
+     > mvn dockerfile:build
      ```
-  4. Start application 
+  4. Create a container layer over the new image, and then starts it
      ```
-     > java -jar url-shortener-1.0.0.RELEASE.jar
+     > docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
      ```
   5. Test the HTTP-based APIs
      ```
