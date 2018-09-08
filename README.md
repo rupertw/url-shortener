@@ -18,7 +18,7 @@
 -->
 
 # Overview
-UrlShortener ia a service for shortening URL, similar to [百度短网址][dwz] and [新浪短网址][sina].
+UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][goo] and [百度短网址][dwz].
 
 # Features
 - Development based on Spring Boot and Redis.
@@ -31,14 +31,59 @@ UrlShortener ia a service for shortening URL, similar to [百度短网址][dwz] 
   >  * JDK 1.8 or above
   >  * A java-based project management software like [Maven][maven]
   >  * Redis service
+  >  * An Java IDE like IntelliJ IDEA (optional)
   >  * Docker Engine (optional)
+  
+  1. Clone
+     ```
+     > git clone https://github.com/rupertw/url-shortener.git
+     ```
+  2. Modifiy application.properties on Indicator Item
+     ``` 
+     #默认8080端口
+     #server.port=80
+     
+     #域名
+     url.shortener.service.host=http://www.me
+   
+     #SnowFlake
+     snowflake.datacenterId=1
+     snowflake.machineId=1
+   
+     #Redis
+     spring.redis.host=localhost
+     spring.redis.port=6379
+     spring.redis.password=todo
+     spring.redis.database=1
+     ...
+     ```
+  3. Build
+     ```
+     > cd url-shortener
+     > mvn -DskipTests clean install -U
+     ```
+  4. Start application 
+     ```
+     > java -jar url-shortener-1.0.0.RELEASE.jar
+     ```
+  5. Test the HTTP-based APIs
+     ```
+     www.me/shorten?url=https://github.com/rupertw/url-shortener
+     www.me/original?surl=http://www.me/cu9Wsskgwd
+     www.me/statistics/topnVisit?topn=5
+     ```
 
 # Documents
 * [Wiki](https://github.com/rupertw/url-shortener/wiki)
+* [Wiki(中文)](https://github.com/rupertw/url-shortener/wiki/zh_overview)
+
+# Reference
+* [如何将一个长URL转换为一个短URL？](https://blog.csdn.net/xlgen157387/article/details/80026452)
+* [SpringMVC4.1之Controller层最佳实践](https://github.com/kuitos/kuitos.github.io/issues/9)
 
 # License
-UrlShortener is released under the [MIT License](https://mit-license.org/).
+UrlShortener is released under the [MIT License](https://github.com/rupertw/url-shortener/blob/master/LICENSE).
 
-[maven]:https://maven.apache.org
+[goo]:https://goo.gl/
 [dwz]:http://dwz.cn/
-[sina]:http://sina.lt/
+[maven]:https://maven.apache.org
