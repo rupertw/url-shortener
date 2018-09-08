@@ -64,7 +64,7 @@ UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][
      > mvn -DskipTests clean package -U
      > mvn dockerfile:build
      ```
-  4. Create a container layer over the new image, and then starts it
+  4. Create a container layer over the new image, and then start it
      ```
      > docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
      ```
