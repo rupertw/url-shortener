@@ -29,7 +29,8 @@ UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][
 # Quick Start
   >  The minimum requirements to run the quick start are: 
   >  * JDK 1.8 or above
-  >  * A java-based project management software like [Maven][maven]
+  >  * Maven 3.5.3 or above
+  >  * Git
   >  * Redis service
   >  * An Java IDE like IntelliJ IDEA (optional)
   >  * Docker Engine (optional)
@@ -86,4 +87,3 @@ UrlShortener is released under the [MIT License](https://github.com/rupertw/url-
 
 [goo]:https://goo.gl/
 [dwz]:http://dwz.cn/
-[maven]:https://maven.apache.org
