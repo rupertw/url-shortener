@@ -18,7 +18,7 @@
 -->
 
 # Overview
-UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][goo] and [百度短网址][dwz].
+UrlShortener is a quick, open-source project for shortening URL, you can easily host your own URL shortener service with it, similar to [TinyURL.com][tinyurl] and [百度短网址][dwz], plus basic statistics over the data.
 
 # Features
 - Development based on Spring Boot and Redis.
@@ -86,5 +86,5 @@ UrlShortener ia a service for shortening URL, similar to [Google URL Shortener][
 # License
 UrlShortener is released under the [MIT License](https://github.com/rupertw/url-shortener/blob/master/LICENSE).
 
-[goo]:https://goo.gl/
+[tinyurl]:https://tinyurl.com/
 [dwz]:http://dwz.cn/
