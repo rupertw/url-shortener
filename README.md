@@ -37,7 +37,7 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
   >  * A Java IDE like IntelliJ IDEA (optional)
   
   1. Clone
-     ```
+     ```Shell
      > git clone https://github.com/rupertw/url-shortener.git
      > cd url-shortener
      ```
@@ -65,12 +65,12 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
      yyy.com
      ```
   3. Build an image from the Dockerfile
-     ```
+     ```Shell
      > mvn -DskipTests clean package -U
      > mvn dockerfile:build
      ```
   4. Create a container layer over the new image, and then start it
-     ```
+     ```Shell
      > docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
      ```
   5. Test the HTTP-based APIs
