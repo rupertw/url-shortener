@@ -23,8 +23,8 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
 # Features
 - Development based on Spring Boot and Redis.
 - Support for configuring blacklist for long URL via domains.
-- Providing HTTP-based APIs for shortening a URL and get the original URL.
-- Providing extended HTTP-based APIs for data statistics, such as the most top N visited short URLs.
+- Providing REST APIs for shortening a URL and get the original URL.
+- Providing extended REST APIs for data statistics, such as the most top N visited short URLs.
 - Support for building docker image by a maven plugin named dockerfile-maven-plugin.
 
 # Quick Start
@@ -37,9 +37,9 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
   >  * A Java IDE like IntelliJ IDEA (optional)
   
   1. Clone
-     ```Shell
-     > git clone https://github.com/rupertw/url-shortener.git
-     > cd url-shortener
+     ```bash
+     $ git clone https://github.com/rupertw/url-shortener.git
+     $ cd url-shortener
      ```
   2. Modifiy application.properties, blacklist
      ``` 
@@ -65,15 +65,15 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
      yyy.com
      ```
   3. Build an image from the Dockerfile
-     ```Shell
-     > mvn -DskipTests clean package -U
-     > mvn dockerfile:build
+     ```bash
+     $ mvn -DskipTests clean package -U
+     $ mvn dockerfile:build
      ```
   4. Create a container layer over the new image, and then start it
-     ```Shell
-     > docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
+     ```bash
+     $ docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
      ```
-  5. Test the HTTP-based APIs
+  5. Access the REST APIs
      ```
      www.me/shorten?url=https://github.com/rupertw/url-shortener
      www.me/original?surl=http://www.me/cu9Wsskgwd
