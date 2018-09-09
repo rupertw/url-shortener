@@ -24,7 +24,7 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
 - Development based on Spring Boot and Redis.
 - Support for configuring blacklist for long URL via domains.
 - Providing HTTP-based APIs for shortening a URL and get the original URL.
-- Providing extended HTTP-based API for data statistics, such as the most top N visited short URLs.
+- Providing extended HTTP-based APIs for data statistics, such as the most top N visited short URLs.
 - Support for building docker image by a maven plugin named dockerfile-maven-plugin.
 
 # Quick Start
@@ -34,7 +34,7 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
   >  * Maven 3.5.3 or above
   >  * Redis server
   >  * Docker Engine
-  >  * An Java IDE like IntelliJ IDEA (optional)
+  >  * A Java IDE like IntelliJ IDEA (optional)
   
   1. Clone
      ```
