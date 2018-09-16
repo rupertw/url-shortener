@@ -5,7 +5,7 @@
 
     <groupId>me.www</groupId>
     <artifactId>url-shortener</artifactId>
-    <version>1.0.0.RELEASE</version>
+    <version>1.0.1.RELEASE</version>
     <packaging>jar</packaging>
 
     <name>url-shortener</name>
