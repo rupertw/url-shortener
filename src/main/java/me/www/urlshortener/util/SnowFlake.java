@@ -1,5 +1,7 @@
 package me.www.urlshortener.util;
 
+import java.util.Random;
+
 /**
  * 基于snowflake算法的ID生成器
  *
@@ -57,6 +59,11 @@ public class SnowFlake {
      */
     private long lastStmp = -1L;
 
+    /**
+     * 生成随机数
+     */
+    private Random random = new Random();
+
     public SnowFlake(long datacenterId, long machineId) {
         if (datacenterId > MAX_DATACENTER_NUM || datacenterId < 0) {
             throw new IllegalArgumentException("datacenterId can't be greater than MAX_DATACENTER_NUM or less than 0");
@@ -92,6 +99,11 @@ public class SnowFlake {
         }
 
         lastStmp = currStmp;
+
+        // 当序列号sequence被重置时，取值为区间[0,9]中随机数（此处解决的问题：当SnowFlake产生的id用于业务数据分片存储依据时，可避免数据过于集中于部分分片，使数据分布均匀）
+        if (sequence == 0L) {
+            sequence = random.nextInt(10);
+        }
 
         return (currStmp - START_STMP) << TIMESTMP_LEFT
                 | datacenterId << DATACENTER_LEFT
