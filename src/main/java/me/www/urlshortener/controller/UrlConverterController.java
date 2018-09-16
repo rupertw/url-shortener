@@ -1,5 +1,6 @@
 package me.www.urlshortener.controller;
 
+import io.swagger.annotations.*;
 import me.www.urlshortener.domain.ShortUrl;
 import me.www.urlshortener.rest.IllegalParamsException;
 import me.www.urlshortener.rest.RestErrorEnum;
@@ -53,11 +54,18 @@ public class UrlConverterController {
     }
 
     /**
-     * 缩短网址
+     * 短网址生成
      *
-     * @param url 原网址
+     * @param url 长网址
      * @return
      */
+    @ApiOperation("短网址生成")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "url", value = "长网址", required = true, dataTypeClass = String.class, paramType = "query", allowEmptyValue = false)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = RestResult.class)
+    })
     @PostMapping("/shorten")
     public RestResult<String> shorten(String url) {
         logger.info("request for /shorten: " + url);
@@ -82,11 +90,18 @@ public class UrlConverterController {
     }
 
     /**
-     * 网址还原
+     * 短网址还原
      *
      * @param surl 短网址
      * @return
      */
+    @ApiOperation("短网址还原")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "surl", value = "短网址", required = true, dataTypeClass = String.class, paramType = "query", allowEmptyValue = false)
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = RestResult.class)
+    })
     @GetMapping("/original")
     public ResponseEntity<RestResult<String>> original(String surl) {
         logger.info("request for /original: " + surl);

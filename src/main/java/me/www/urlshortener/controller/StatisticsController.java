@@ -1,5 +1,6 @@
 package me.www.urlshortener.controller;
 
+import io.swagger.annotations.*;
 import me.www.urlshortener.rest.RestResult;
 import me.www.urlshortener.rest.RestResultGenerator;
 import me.www.urlshortener.service.ShortUrlService;
@@ -34,6 +35,13 @@ public class StatisticsController {
      * @param topn
      * @return 排行url信息列表
      */
+    @ApiOperation("访问计数排行")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "topn", value = "查询排行数", defaultValue = "10", required = false, dataTypeClass = Integer.class, paramType = "query")
+    })
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "", response = RestResult.class)
+    })
     @GetMapping("/topnVisit")
     public RestResult<List<ShortUrlVO>> topnVisit(Integer topn) {
         logger.info("request for /statistics/topnVisit: " + topn);
