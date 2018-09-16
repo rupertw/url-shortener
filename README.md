@@ -82,7 +82,9 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
 * [Wiki](https://github.com/rupertw/url-shortener/wiki)
 * [Wiki(中文)](https://github.com/rupertw/url-shortener/wiki/zh_overview)
 
-# Reference
+# [Releases](https://github.com/rupertw/url-shortener/releases)
+
+# References
 * [如何将一个长URL转换为一个短URL？](https://blog.csdn.net/xlgen157387/article/details/80026452)
 * [SpringMVC4.1之Controller层最佳实践](https://github.com/kuitos/kuitos.github.io/issues/9)
 
