@@ -82,7 +82,10 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
 * [Wiki](https://github.com/rupertw/url-shortener/wiki)
 * [Wiki(中文)](https://github.com/rupertw/url-shortener/wiki/zh_overview)
 
-# [Releases](https://github.com/rupertw/url-shortener/releases)
+# Releases
+* [All releases](https://github.com/rupertw/url-shortener/releases)
+* [v1.0.1.RELEASE](https://github.com/rupertw/url-shortener/releases/tag/v1.0.1.RELEASE)
+* [v1.0.0.RELEASE](https://github.com/rupertw/url-shortener/releases/tag/v1.0.0.RELEASE)
 
 # References
 * [如何将一个长URL转换为一个短URL？](https://blog.csdn.net/xlgen157387/article/details/80026452)
