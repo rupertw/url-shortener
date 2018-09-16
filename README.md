@@ -22,10 +22,10 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
 
 # Features
 - Development based on Spring Boot and Redis.
+- Support for building docker image by a maven plugin named dockerfile-maven-plugin.
 - Support for configuring blacklist for long URL via domains.
 - Providing REST APIs for shortening a URL and get the original URL.
 - Providing extended REST APIs for data statistics, such as the most top N visited short URLs.
-- Support for building docker image by a maven plugin named dockerfile-maven-plugin.
 
 # Quick Start
   >  The minimum requirements to run the quick start are: 
@@ -73,11 +73,9 @@ UrlShortener is a quick, open-source project for shortening URL, you can easily 
      ```bash
      $ docker run -p 80:8080 rupertw/url-shortener:1.0.0.RELEASE
      ```
-  5. Access the REST APIs
+  5. Test the REST APIs
      ```
-     www.me/shorten?url=https://github.com/rupertw/url-shortener
-     www.me/original?surl=http://www.me/cu9Wsskgwd
-     www.me/statistics/topnVisit?topn=5
+     http://127.0.0.1/swagger-ui.html
      ```
 
 # Documents
