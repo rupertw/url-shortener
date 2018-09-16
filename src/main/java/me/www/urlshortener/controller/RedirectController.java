@@ -8,9 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
@@ -20,7 +20,7 @@ import java.net.URI;
  * @author www
  * @since 1.0.0
  */
-@RestController
+@Controller
 public class RedirectController {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
@@ -28,7 +28,7 @@ public class RedirectController {
     @Autowired
     private ShortUrlService shortUrlService;
 
-    @GetMapping(value = "/{scode}")
+    @GetMapping(value = "/{scode:^[A-Za-z0-9]+$}")
     public ResponseEntity<Void> redirect(@PathVariable String scode) {
         logger.info("request for redirect: " + scode);
 
