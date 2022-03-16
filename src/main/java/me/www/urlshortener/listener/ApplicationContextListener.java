@@ -1,6 +1,6 @@
 package me.www.urlshortener.listener;
 
-import me.www.urlshortener.constant.RedisConsts;
+import me.www.urlshortener.constant.RedisConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,9 +48,9 @@ public class ApplicationContextListener implements ApplicationListener<ContextRe
         // 线程处理：采用lru算法清理最近简化url缓存
         threadPoolTaskExecutor.execute(() -> {
             while (true) {
-                stringRedisTemplate.watch(RedisConsts.LR_SHORTEN_URL_ZSET);
-                Long zsetSize = stringRedisTemplate.opsForZSet().size(RedisConsts.LR_SHORTEN_URL_ZSET);
-                if (zsetSize <= RedisConsts.LR_SHORTEN_URL_LIMIT) {
+                stringRedisTemplate.watch(RedisConstants.LR_SHORTEN_URL_ZSET);
+                Long zsetSize = stringRedisTemplate.opsForZSet().size(RedisConstants.LR_SHORTEN_URL_ZSET);
+                if (zsetSize <= RedisConstants.LR_SHORTEN_URL_LIMIT) {
                     stringRedisTemplate.unwatch();
                     try {
                         // 每分钟执行一次批量清理（高并发下，需每秒执行一次批量清理，注意要保证清理速度大于产生速度）
@@ -61,11 +61,11 @@ public class ApplicationContextListener implements ApplicationListener<ContextRe
                     continue;
                 }
 
-                Long end_index = Long.min(zsetSize - RedisConsts.LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT);
-                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
+                Long end_index = Long.min(zsetSize - RedisConstants.LR_SHORTEN_URL_LIMIT, LR_SHORTEN_URL_CLEAR_PER_LIMIT);
+                Set<String> urlSet = stringRedisTemplate.opsForZSet().range(RedisConstants.LR_SHORTEN_URL_ZSET, 0, end_index - 1); // 注：查询redis数据，必须在multi()之前
                 stringRedisTemplate.multi();
-                stringRedisTemplate.opsForHash().delete(RedisConsts.LR_SHORTEN_URL_HASH, urlSet.toArray());
-                stringRedisTemplate.opsForZSet().removeRange(RedisConsts.LR_SHORTEN_URL_ZSET, 0, end_index - 1);
+                stringRedisTemplate.opsForHash().delete(RedisConstants.LR_SHORTEN_URL_HASH, urlSet.toArray());
+                stringRedisTemplate.opsForZSet().removeRange(RedisConstants.LR_SHORTEN_URL_ZSET, 0, end_index - 1);
                 List<Object> results = stringRedisTemplate.exec();
                 // empty response indicates that the transaction was aborted due to the watched key changing.
                 if (results.isEmpty()) {

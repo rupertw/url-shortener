@@ -1,6 +1,6 @@
 package me.www.urlshortener.service.impl;
 
-import me.www.urlshortener.constant.RedisConsts;
+import me.www.urlshortener.constant.RedisConstants;
 import me.www.urlshortener.domain.ShortUrl;
 import me.www.urlshortener.repository.ShortUrlRepository;
 import me.www.urlshortener.service.ShortUrlService;
@@ -50,11 +50,11 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         }
 
         /* 查询是否已简化url */
-        String shortUrlKey = (String) stringRedisTemplate.opsForHash().get(RedisConsts.LR_SHORTEN_URL_HASH, url);
+        String shortUrlKey = (String) stringRedisTemplate.opsForHash().get(RedisConstants.LR_SHORTEN_URL_HASH, url);
         if (StringUtils.isNotEmpty(shortUrlKey)) {
             Optional<ShortUrl> optional = shortUrlRepository.findById(shortUrlKey.split(":")[1]);
             if (optional.isPresent()) {
-                stringRedisTemplate.opsForZSet().add(RedisConsts.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+                stringRedisTemplate.opsForZSet().add(RedisConstants.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
                 return optional.get();
             }
         }
@@ -64,14 +64,14 @@ public class ShortUrlServiceImpl implements ShortUrlService {
         ShortUrl shortUrl = new ShortUrl(code, url);
         shortUrlRepository.save(shortUrl);
         // 保存到最近简化url缓存
-        stringRedisTemplate.opsForZSet().add(RedisConsts.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
-        stringRedisTemplate.opsForHash().put(RedisConsts.LR_SHORTEN_URL_HASH, url, RedisConsts.SHORT_URL_KEY_PREFIX + code);
+        stringRedisTemplate.opsForZSet().add(RedisConstants.LR_SHORTEN_URL_ZSET, url, System.currentTimeMillis());
+        stringRedisTemplate.opsForHash().put(RedisConstants.LR_SHORTEN_URL_HASH, url, RedisConstants.SHORT_URL_KEY_PREFIX + code);
 
         return shortUrl;
     }
 
     @Override
-    public ShortUrl getShortUrl(String code, Boolean toVisit) {
+    public ShortUrl getShortUrl(String code, boolean toVisit) {
         if (StringUtils.isEmpty(code)) {
             return null;
         }
@@ -81,7 +81,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
             ShortUrl shortUrl = optional.get();
             if (toVisit) {
                 // 增加访问次数
-                stringRedisTemplate.opsForZSet().incrementScore(RedisConsts.VISIT_COUNT_KEY, RedisConsts.SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
+                stringRedisTemplate.opsForZSet().incrementScore(RedisConstants.VISIT_COUNT_KEY, RedisConstants.SHORT_URL_KEY_PREFIX + shortUrl.getCode(), 1);
             }
             return shortUrl;
         } else {
@@ -93,7 +93,7 @@ public class ShortUrlServiceImpl implements ShortUrlService {
     @Override
     public List<ShortUrlVO> topnVisit(Integer topn) {
         // 查询数据
-        Set<ZSetOperations.TypedTuple<String>> topnSet = stringRedisTemplate.opsForZSet().reverseRangeWithScores(RedisConsts.VISIT_COUNT_KEY, 0, topn - 1);
+        Set<ZSetOperations.TypedTuple<String>> topnSet = stringRedisTemplate.opsForZSet().reverseRangeWithScores(RedisConstants.VISIT_COUNT_KEY, 0, topn - 1);
         if (topnSet.isEmpty()) {
             return Collections.emptyList();
         }

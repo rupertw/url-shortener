@@ -6,7 +6,7 @@ package me.www.urlshortener.constant;
  * @author wwww
  * @since 1.0.0
  */
-public class RedisConsts {
+public class RedisConstants {
 
     /**
      * redis key: ShortUrl存储key前缀 (redis类型: hash)

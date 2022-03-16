@@ -28,7 +28,7 @@ public interface ShortUrlService {
      * @param toVisit 查询结果是否用于访问
      * @return
      */
-    ShortUrl getShortUrl(String code, Boolean toVisit);
+    ShortUrl getShortUrl(String code, boolean toVisit);
 
     /**
      * 查询访问计数排行
